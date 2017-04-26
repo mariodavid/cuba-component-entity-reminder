@@ -18,10 +18,10 @@ buildscript {
     }
 }
 
-def globalModule = project(':app-global')
-def coreModule = project(':app-core')
-def guiModule = project(':app-gui')
-def webModule = project(':app-web')
+def globalModule = project(':entityreminder-global')
+def coreModule = project(':entityreminder-core')
+def guiModule = project(':entityreminder-gui')
+def webModule = project(':entityreminder-web')
 
 def servletApi = 'org.apache.tomcat:tomcat-servlet-api:8.0.26'
 
@@ -39,6 +39,7 @@ cuba {
         dir = "$project.rootDir/deploy/tomcat"
     }
     ide {
+         
         vcs = 'Git'
     }
 }
@@ -58,6 +59,10 @@ configure([globalModule, coreModule, guiModule, webModule]) {
 
     dependencies {
         testCompile('junit:junit:4.12')
+
+        testCompile('org.spockframework:spock-core:1.0-groovy-2.4')
+        testCompile('org.springframework:spring-test:4.3.1.RELEASE')
+        testRuntime "cglib:cglib-nodep:3.2.4"
     }
 
     task sourceJar(type: Jar) {
@@ -70,8 +75,24 @@ configure([globalModule, coreModule, guiModule, webModule]) {
     }
 }
 
+configure([globalModule, coreModule, guiModule, webModule]) {
+    apply(plugin: 'groovy')
+
+    sourceSets {
+        main { groovy { srcDirs = ["src"] } }
+        test { groovy { srcDirs = ["test"] } }
+    }
+}
+
 configure(globalModule) {
     task enhance(type: CubaEnhancing)
+
+    jar {
+        manifest {
+            attributes('App-Component-Id': cuba.artifact.group)
+            attributes('App-Component-Version': cuba.artifact.version + (cuba.artifact.isSnapshot ? '-SNAPSHOT' : ''))
+        }
+    }
 
     
 }
@@ -93,7 +114,7 @@ configure(coreModule) {
 
     task cleanConf(description: 'Cleans up conf directory') {
         doLast {
-            def dir = new File(cuba.tomcat.dir, '/conf/app-core')
+            def dir = new File(cuba.tomcat.dir, '/conf/entityreminder-core')
             if (dir.isDirectory()) {
                 ant.delete(includeemptydirs: true) {
                     fileset(dir: dir, includes: '**/*', excludes: 'local.app.properties')
@@ -103,8 +124,8 @@ configure(coreModule) {
     }
 
     task deploy(dependsOn: [assemble, cleanConf], type: CubaDeployment) {
-        appName = 'app-core'
-        appJars('app-global', 'app-core')
+        appName = 'entityreminder-core'
+        appJars('entityreminder-global', 'entityreminder-core')
     }
 
     task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {
@@ -133,7 +154,7 @@ configure(guiModule) {
     task deployConf(type: Copy) {
         from file('src')
         include "de/balvi/cuba/entityreminder/**"
-        into "$cuba.tomcat.dir/conf/app"
+        into "$cuba.tomcat.dir/conf/entityreminder"
     }
 }
 
@@ -161,17 +182,17 @@ configure(webModule) {
     task deployConf(type: Copy) {
         from file('src')
         include "de/balvi/cuba/entityreminder/**"
-        into "$cuba.tomcat.dir/conf/app"
+        into "$cuba.tomcat.dir/conf/entityreminder"
     }
 
     task clearMessagesCache(type: CubaClearMessagesCache) {
-        appName = 'app'
+        appName = 'entityreminder'
     }
     deployConf.dependsOn clearMessagesCache
 
     task cleanConf(description: 'Cleans up conf directory') {
         doLast {
-            def dir = new File(cuba.tomcat.dir, '/conf/app')
+            def dir = new File(cuba.tomcat.dir, '/conf/entityreminder')
             if (dir.isDirectory()) {
                 ant.delete(includeemptydirs: true) {
                     fileset(dir: dir, includes: '**/*', excludes: 'local.app.properties')
@@ -181,8 +202,8 @@ configure(webModule) {
     }
 
     task deploy(dependsOn: [assemble, cleanConf], type: CubaDeployment) {
-        appName = 'app'
-        appJars('app-global', 'app-gui', 'app-web')
+        appName = 'entityreminder'
+        appJars('entityreminder-global', 'entityreminder-gui', 'entityreminder-web')
     }
 }
 
@@ -190,13 +211,13 @@ configure(webModule) {
 
 
 
-task undeploy(type: Delete, dependsOn: ':app-web:cleanConf') {
+task undeploy(type: Delete, dependsOn: ':entityreminder-web:cleanConf') {
     delete("$cuba.tomcat.dir/shared")
-    delete("$cuba.tomcat.dir/webapps/app-core")
-    delete("$cuba.tomcat.dir/webapps/app")
+    delete("$cuba.tomcat.dir/webapps/entityreminder-core")
+    delete("$cuba.tomcat.dir/webapps/entityreminder")
 }
 
-task restart(dependsOn: ['stop', ':app-core:deploy', ':app-web:deploy'], description: 'Redeploys applications and restarts local Tomcat') {
+task restart(dependsOn: ['stop', ':entityreminder-core:deploy', ':entityreminder-web:deploy'], description: 'Redeploys applications and restarts local Tomcat') {
     doLast {
         ant.waitfor(maxwait: 6, maxwaitunit: 'second', checkevery: 2, checkeveryunit: 'second') {
             not {
