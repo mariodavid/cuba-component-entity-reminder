@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="de.balvi.cuba.entityreminder.web.reminder.ReminderBrowse"
+        focusComponent="remindersTable"
+        lookupComponent="remindersTable"
+        messagesPack="de.balvi.cuba.entityreminder.web.reminder">
+    <dsContext>
+        <groupDatasource id="remindersDs"
+                         class="de.balvi.cuba.entityreminder.entity.Reminder"
+                         view="_local">
+            <query>
+                <![CDATA[select e from dbcer$Reminder e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="remindersTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="remindersTable"
+                datasource="remindersDs">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="remindersTable"
+                    multiselect="true"
+                    width="100%">
+            <actions>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="remove"/>
+                <action id="markAsDoneAction"
+                        invoke="markAsDone"
+                        caption="msg://markAsDone"
+                        icon="font-icon:CHECK_SQUARE_O"
+                        trackSelection="true"
+
+                />
+            </actions>
+            <columns>
+                <column id="done"/>
+                <column id="remindAt"/>
+            </columns>
+            <rows datasource="remindersDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="remindersTable.create"/>
+                <button id="editBtn"
+                        action="remindersTable.edit"/>
+                <button id="removeBtn"
+                        action="remindersTable.remove"/>
+                <button id="markAsDoneBtn"
+                        action="remindersTable.markAsDoneAction"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

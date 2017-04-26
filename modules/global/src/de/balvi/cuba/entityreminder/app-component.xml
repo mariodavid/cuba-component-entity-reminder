@@ -21,6 +21,10 @@
                   value="+de/balvi/cuba/entityreminder/spring.xml"/>
         <property name="cuba.mainMessagePack"
                   value="+de.balvi.cuba.entityreminder.core"/>
+        <artifact classifier="db"
+                  configuration="dbscripts"
+                  ext="zip"
+                  name="entityreminder-core"/>
     </module>
     <module blocks="web,desktop"
             dependsOn="global"

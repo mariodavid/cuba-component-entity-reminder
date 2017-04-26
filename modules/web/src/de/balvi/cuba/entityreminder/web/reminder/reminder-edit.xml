@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="de.balvi.cuba.entityreminder.web.reminder.ReminderEdit"
+        datasource="reminderDs"
+        focusComponent="fieldGroup"
+        messagesPack="de.balvi.cuba.entityreminder.web.reminder">
+    <dsContext>
+        <datasource id="reminderDs"
+                    class="de.balvi.cuba.entityreminder.entity.Reminder"
+                    view="_local"/>
+    </dsContext>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="reminderDs">
+            <column width="250px">
+                <field property="remindAt"/>
+                <field property="done"/>
+            </column>
+        </fieldGroup>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
-
     <include file="de/balvi/cuba/entityreminder/screens.xml"/>
-
+    <screen id="dbcer$Reminder.browse"
+            template="de/balvi/cuba/entityreminder/web/reminder/reminder-browse.xml"/>
+    <screen id="dbcer$Reminder.edit"
+            template="de/balvi/cuba/entityreminder/web/reminder/reminder-edit.xml"/>
+    <screen id="dbcer$Customer.browse"
+            template="de/balvi/cuba/entityreminder/web/customer/customer-browse.xml"/>
+    <screen id="dbcer$Customer.edit"
+            template="de/balvi/cuba/entityreminder/web/customer/customer-edit.xml"/>
 </screen-config>
